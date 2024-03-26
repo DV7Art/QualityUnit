@@ -1,9 +1,9 @@
 <?php
 require_once 'db/Record.php';
-require_once 'DataReader.php';
 require_once 'DataProcessor.php';
-require_once 'DataWriter.php';
+require_once 'service/impl/DataReaderImpl.php';
+require_once 'service/impl/DataWriterImpl.php';
 
-$records = (new DataReader())->readData('input.txt');
+$records = (new DataReaderImpl())->readData('input.txt');
 $results = (new DataProcessor())->processRecords($records);
-                    (new DataWriter())->writeResults('output.txt', $results);
+                    (new DataWriterImpl())->writeResults('output.txt', $results);

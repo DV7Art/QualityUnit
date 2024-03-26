@@ -1,7 +1,7 @@
 <?php
-require 'strategy/ServiceIdMatchStrategy.php';
-require 'strategy/QuestionTypeIdMatchStrategy.php';
-require 'strategy/DateMatchStrategy.php';
+require 'strategy/impl/ServiceIdMatchStrategy.php';
+require 'strategy/impl/QuestionTypeIdMatchStrategy.php';
+require 'strategy/impl/DateMatchStrategy.php';
 const MAX_SERVICES = 10;
 const MAX_VARIATIONS = 3;
 const MAX_QUESTIONS_TYPE = 10;
@@ -14,7 +14,7 @@ class DataProcessor {
         $this->strategies = [
             'serviceId' => new ServiceIdMatchStrategy(),
             'questionTypeId' => new QuestionTypeIdMatchStrategy(),
-            'dateFrom' => new DateMatchStrategy('dateFrom')
+            'date' => new DateMatchStrategy()
         ];
     }
     public function processRecords($records): array
@@ -45,7 +45,6 @@ class DataProcessor {
         return $results;
     }
 
-
     private function matchRecord($query, $timeline): bool
     {
         // Check service_id
@@ -72,28 +71,22 @@ class DataProcessor {
         } else {
             $matchQuestionType = $query->questionTypeId <= MAX_QUESTIONS_TYPE;
         }
+
+        if (!$matchQuestionType) {
+            return false;
+        }
+
         foreach ($this->strategies as $field => $strategy) {
             if (!$strategy->match($query->$field, $timeline->$field)) {
                 return false;
             }
         }
 
-        if (!$matchQuestionType) {
-            return false;
-        }
 
         // Check responseType
-        if ($query->responseType != '*' && $timeline->responseType !== null && $query->responseType != $timeline->responseType) {
+        if ($timeline->responseType !== null && $query->responseType != $timeline->responseType) {
             return false;
         }
-
-//        // Check dateFrom & dateTo
-//        if ($query->dateFrom && $timeline->dateFrom && strtotime($timeline->dateFrom) < strtotime($query->dateFrom)) {
-//            return false;
-//        }
-//        if ($query->dateTo && $timeline->dateFrom && strtotime($timeline->dateFrom) > strtotime($query->dateTo)) {
-//            return false;
-//        }
 
         return true;
     }

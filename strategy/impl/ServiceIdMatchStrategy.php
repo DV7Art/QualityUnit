@@ -1,5 +1,5 @@
 <?php
-require_once 'MatchStrategy.php';
+require_once 'strategy/MatchStrategy.php';
 class ServiceIdMatchStrategy implements MatchStrategy {
     public function match($queryPart, $timelinePart): bool {
         if ($queryPart != '*') {
