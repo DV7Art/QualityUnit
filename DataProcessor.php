@@ -10,12 +10,8 @@ const MAX_SUB_CATEGORIES = 5;
 const QUERY = "D";
 class DataProcessor {
     private array $strategies;
-    public function __construct() {
-        $this->strategies = [
-            'serviceId' => new ServiceIdMatchStrategy(),
-            'questionTypeId' => new QuestionTypeIdMatchStrategy(),
-            'date' => new DateMatchStrategy()
-        ];
+    public function __construct(array $strategies) {
+        $this->strategies = $strategies;
     }
     public function processRecords($records): array
     {
@@ -81,7 +77,6 @@ class DataProcessor {
                 return false;
             }
         }
-
 
         // Check responseType
         if ($timeline->responseType !== null && $query->responseType != $timeline->responseType) {
